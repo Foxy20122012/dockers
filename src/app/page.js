@@ -5,7 +5,7 @@ export default function Home() {
     <div className="bg-teal-300 w-screen h-screen">
       <div>
         Hello world!
-        change number two
+        change number three
       </div>
       <Image
         className=""
