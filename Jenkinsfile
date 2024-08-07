@@ -3,13 +3,16 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'my-app:latest'
+        CREDENTIAL_ID = "${env.CREDENTIAL_ID}"
+        DEPLOY_SERVER_IP = "${env.DEPLOY_SERVER_IP}"
+        DEPLOY_USER = "${env.DEPLOY_USER}"
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
+                    // Construir la imagen Docker
                     docker.build(DOCKER_IMAGE)
                 }
             }
@@ -18,10 +21,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Deploy the Docker image (you can customize this to your deployment strategy)
-                    sshagent(['deploy-server-credentials']) {
+                    // Desplegar la imagen Docker usando ssh directamente
+                    withCredentials([sshUserPrivateKey(credentialsId: 'github', keyFileVariable: 'SSH_KEY')]) {
                         sh """
-                        ssh user@your-server 'docker stop my-app || true && docker rm my-app || true && docker run -d --name my-app -p 3000:3000 my-app:latest'
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$DEPLOY_USER@\$DEPLOY_SERVER_IP '
+                        docker stop my-app || true &&
+                        docker rm my-app || true &&
+                        docker run -d --name my-app -p 3000:3000 my-app:latest'
                         """
                     }
                 }
@@ -31,7 +37,7 @@ pipeline {
 
     post {
         always {
-            // Clean up workspace
+            // Limpiar el espacio de trabajo
             cleanWs()
         }
     }
