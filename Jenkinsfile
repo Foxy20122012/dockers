@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Desplegar la imagen Docker usando ssh directamente
-                    withCredentials([sshUserPrivateKey(credentialsId: 'github', keyFileVariable: 'SSH_KEY')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
                         sh """
                         ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$DEPLOY_USER@\$DEPLOY_SERVER_IP '
                         docker stop my-app || true &&
