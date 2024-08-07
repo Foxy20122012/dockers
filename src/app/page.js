@@ -2,9 +2,10 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="bg-cyan-600 w-screen h-screen">
+    <div className="bg-teal-300 w-screen h-screen">
       <div>
         Hello world!
+        change number two
       </div>
       <Image
         className=""
