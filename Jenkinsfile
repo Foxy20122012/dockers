@@ -3,9 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'my-app:latest'
-        CREDENTIAL_ID = "${env.CREDENTIAL_ID}"
-        DEPLOY_SERVER_IP = "${env.DEPLOY_SERVER_IP}"
-        DEPLOY_USER = "${env.DEPLOY_USER}"
     }
 
     stages {
@@ -21,15 +18,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Desplegar la imagen Docker usando ssh directamente
-                    withCredentials([sshUserPrivateKey(credentialsId: CREDENTIAL_ID, keyFileVariable: 'SSH_KEY')]) {
-                        sh """
-                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$DEPLOY_USER@\$DEPLOY_SERVER_IP '
-                        docker stop my-app || true &&
-                        docker rm my-app || true &&
-                        docker run -d --name my-app -p 3000:3000 my-app:latest'
-                        """
-                    }
+                    // Desplegar la imagen Docker directamente en el servidor local
+                    sh """
+                    docker stop my-app || true &&
+                    docker rm my-app || true &&
+                    docker run -d --name my-app -p 3000:3000 my-app:latest
+                    """
                 }
             }
         }
